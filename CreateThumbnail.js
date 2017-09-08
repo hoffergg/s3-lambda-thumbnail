@@ -6,8 +6,7 @@ var gm = require('gm')
 var util = require('util');
 
 // constants
-var MAX_WIDTH  = 200;
-var MAX_HEIGHT = 200;
+var MIN_SIDE = 200;
 
 // get reference to S3 client 
 var s3 = new AWS.S3();
@@ -53,12 +52,20 @@ exports.handler = function(event, context, callback) {
         function transform(response, next) {
             gm(response.Body).size(function(err, size) {
                 // Infer the scaling factor to avoid stretching the image unnaturally.
-                var scalingFactor = Math.min(
-                    MAX_WIDTH / size.width,
-                    MAX_HEIGHT / size.height
-                );
-                var width  = scalingFactor * size.width;
-                var height = scalingFactor * size.height;
+                var width;
+                var height;
+
+		var minSize = Math.min(size.width, size.height);
+		if(minSize === size.width)
+		    {	
+			width = MIN_SIDE;
+			height = MIN_SIDE*size.height/size.width;
+		    }
+		    else
+		    {
+			height = MIN_SIDE;
+			width = MIN_SIDE*size.width/size.height;
+		    } 
 
                 // Transform the image buffer in memory.
                 this.resize(width, height)
