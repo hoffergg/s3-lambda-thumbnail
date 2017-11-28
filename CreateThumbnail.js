@@ -34,10 +34,10 @@ exports.handler = function(event, context, callback) {
         return;
     }
     var imageType = typeMatch[1];
-    if (imageType != "jpg" && imageType != "png") {
-        callback('Unsupported image type: ${imageType}');
-        return;
-    }
+    //if (imageType != "jpg" && imageType != "png") {
+    //    callback('Unsupported image type: ${imageType}');
+    //    return;
+    //}
 
     // Download the image from S3, transform, and upload to a different S3 bucket.
     async.waterfall([
